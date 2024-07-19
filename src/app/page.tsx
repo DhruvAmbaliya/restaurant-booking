@@ -130,7 +130,7 @@ function HomePage() {
       </div>
 
       {role === "user" && (
-        <div className="container mx-auto px-4 sm:px-8">
+        <div className="container mx-auto px-4 sm:px-8 overflow-hidden">
           <div className="py-8">
             <div className="flex flex-col gap-6">
               {filteredRestaurants.map((restaurant) => (

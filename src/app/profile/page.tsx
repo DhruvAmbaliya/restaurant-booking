@@ -11,13 +11,20 @@ type UserData = {
   email: string;
 };
 
+type Booking = {
+  startTime: string;
+  endTime: string;
+  userId: string;
+  username: string;
+  email: string;
+};
+
 type TableBooking = {
   tableId: string;
   restaurantId: string;
-  startTime: string;
-  endTime: string;
   restaurantName: string;
   restaurantAddress: string;
+  bookings?: Booking[];
 };
 
 const Profile = () => {
@@ -40,6 +47,7 @@ const Profile = () => {
     const getUserBookings = async () => {
       try {
         const res = await axios.get("/api/users/tables");
+        console.log(res.data);
         setBookings(res.data);
       } catch (error) {
         toast.error("Failed to fetch table bookings");
@@ -52,7 +60,6 @@ const Profile = () => {
 
     setRole(localStorage.getItem("role"));
   }, []);
-
   const logout = async () => {
     try {
       await axios.get("/api/users/logout");
@@ -100,23 +107,27 @@ const Profile = () => {
             Your Table Bookings
           </h2>
           {bookings.length > 0 ? (
-            bookings.map((booking) => (
-              <div
-                key={booking.tableId}
-                className="mb-4 p-4 bg-gray-50 shadow-md rounded-lg border-l-4 border-green-500 "
-              >
-                <p className="text-lg font-semibold text-gray-800">
-                  Restaurant: {booking.restaurantName}
-                </p>
-                <p className="text-gray-600">
-                  Address: {booking.restaurantAddress}
-                </p>
-                <p className="text-gray-600">
-                  From: {new Date(booking.startTime).toLocaleString()} -
-                  To: {new Date(booking.endTime).toLocaleString()}
-                </p>
-              </div>
-            ))
+            bookings.map((tableBooking) =>
+              tableBooking.bookings
+                ? tableBooking.bookings.map((booking, index) => (
+                    <div
+                      key={index}
+                      className="mb-4 p-4 bg-gray-50 shadow-md rounded-lg border-l-4 border-green-500"
+                    >
+                      <p className="text-lg font-semibold text-gray-800">
+                        Restaurant: {tableBooking.restaurantName}
+                      </p>
+                      <p className="text-gray-600">
+                        Address: {tableBooking.restaurantAddress}
+                      </p>
+                      <p className="text-gray-600">
+                        From: {new Date(booking.startTime).toLocaleString()} -
+                        To: {new Date(booking.endTime).toLocaleString()}
+                      </p>
+                    </div>
+                  ))
+                : []
+            )
           ) : (
             <p className="text-gray-800">No table bookings found.</p>
           )}

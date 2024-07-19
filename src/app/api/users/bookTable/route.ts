@@ -30,6 +30,23 @@ export async function POST(request: NextRequest) {
     const endDateTime = new Date(endTime);
     const openTime = new Date(`1970-01-01T${restaurant.openTime}`);
     const closeTime = new Date(`1970-01-01T${restaurant.closeTime}`);
+    const currentTime = new Date();
+
+    if (startDateTime <= currentTime || endDateTime <= currentTime) {
+      return NextResponse.json(
+        { error: "Start and end times must be in the future." },
+        { status: 400 }
+      );
+    }
+
+    const startDate = startDateTime.toDateString();
+    const endDate = endDateTime.toDateString();
+    if (startDate !== endDate) {
+      return NextResponse.json(
+        { error: "Start and end times must be on the same day." },
+        { status: 400 }
+      );
+    }
 
     if (
       startDateTime.getHours() < openTime.getHours() ||
